@@ -1,72 +1,74 @@
-# 🧠 FocoAventura: Explorando el TDAH
+# 🧠 FocoAventura (Proyecto PLAY)
 
-¡Bienvenido a **FocoAventura**! Una plataforma web inmersiva diseñada para informar sobre el Trastorno por Déficit de Atención e Hiperactividad (TDAH) de una manera positiva, moderna y dinámica.
+¡Bienvenido a **FocoAventura**! Una plataforma web de vanguardia diseñada para transformar la percepción del Trastorno por Déficit de Atención e Hiperactividad (TDAH). A través de una narrativa inmersiva y herramientas lúdicas, buscamos empoderar a la comunidad neurodivergente.
 
-## 🚀 Visión General
+---
 
-FocoAventura no es solo una página informativa; es una experiencia digital que utiliza técnicas de **Scrollytelling** para guiar al usuario a través de una narrativa de auto-aceptación y empoderamiento. El proyecto combina un diseño minimalista de alto nivel con juegos cognitivos diseñados para ejercitar la concentración.
+## 🚀 Visión Técnica y UX
 
-## ✨ Características Principales
+FocoAventura trasciende el concepto de una web informativa convencional. Se ha construido bajo los más altos estándares de ingeniería frontend y diseño UI/UX:
 
-### 🎭 Narrativa Inmersiva (Home)
-- **Scrollytelling:** Animaciones fluidas que revelan mensajes positivos conforme el usuario se desplaza.
-- **Marca de Agua Dinámica:** Fondo con efecto Parallax ("FOCUS") que aporta profundidad visual.
-- **Glassmorphism:** Interfaz moderna basada en paneles de cristal translúcido.
+- **Arquitectura de Scrollytelling:** Implementación avanzada de `framer-motion` para guiar al usuario a través de una experiencia cinematográfica impulsada por el scroll.
+- **Estética Minimalista SaaS:** Una paleta de colores familiar y acogedora (Azul Cielo, Blanco, Cristal) optimizada para reducir la fatiga visual y fomentar el enfoque.
+- **Diseño Adaptativo:** Totalmente Mobile-First, garantizando una experiencia fluida en cualquier dispositivo.
 
-### 📚 Sección de Aprendizaje (Aprender)
-- **Guía de Superpoderes:** Contenido estructurado que resalta las fortalezas del TDAH (creatividad, hiperfoco, resiliencia).
-- **Estrategias de Apoyo:** Consejos prácticos para la vida diaria organizados visualmente.
-- **Consultas Personalizadas:** Formulario inteligente con selección de país (`react-select`).
+## ✨ Módulos Principales
+
+### 🎭 Experiencia Inmersiva (Home)
+- **Animaciones de Scroll:** Mensajes positivos que emergen y se desvanecen con lógica de hardware (`display: none` dinámico) para un rendimiento óptimo.
+- **Marca de Agua Focus:** Textura visual dinámica con efectos de contorno y parallax.
+- **Final Estacionario:** Un menú de opciones final bloqueado en el centro del visor para facilitar la conversión y navegación.
+
+### 📚 Centro de Aprendizaje (Aprender)
+- **Estructura Bento:** Organización jerárquica de la información utilizando tarjetas de cristal translúcido.
+- **Enfoque en Fortalezas:** Sección dedicada a los "superpoderes" del TDAH, resaltando la creatividad y el hiperfoco.
+- **Recursos Dinámicos:** Integración de formularios inteligentes con selección geográfica global.
 
 ### 🎮 Gimnasio Cognitivo (Jugar)
-- **Memory Game 3D:** Un juego de memoria con física de rotación en 3D para entrenar la atención sostenida.
-- **Dashboard de Enfoque:** Interfaz estilo tablero para seguir el progreso y aceptar retos diarios.
+- **Memory Game 3D:** Motor de juego en React con transformaciones físicas en el eje Y para entrenar la memoria de trabajo.
+- **Dashboard de Progreso:** Interfaz tipo "Control Center" para gestionar retos y visualizar estadísticas de entrenamiento.
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Stack Tecnológico
 
-- **Frontend:** React (JavaScript) + Vite.
-- **Estilos:** Tailwind CSS v4 (Configuración de vanguardia).
-- **Animaciones:** Framer Motion (Micro-interacciones y lógica de scroll).
-- **Componentes UI:** DaisyUI.
-- **Enrutamiento:** React Router DOM.
-- **Iconos:** React Icons.
-- **Utilidades:** 
-  - `date-fns`: Manejo de fechas.
-  - `react-select` & `react-select-country-list`: Formularios avanzados.
+- **Core:** React 18 + Vite (Ecosistema ultra-rápido).
+- **Styling:** Tailwind CSS v4 + DaisyUI (Sistemas de diseño atómico).
+- **Motion:** Framer Motion (Orquestación de animaciones complejas).
+- **Form Management:** React Select + Country List.
+- **Iconografía:** React Icons (FontAwesome).
 
-## 📋 Requerimientos e Instalación
+## 📋 Guía de Instalación y Uso
 
-Para ejecutar este proyecto en tu entorno local, asegúrate de tener instalado [Node.js](https://nodejs.org/).
-
-### 1. Clonar o entrar a la carpeta del proyecto:
+### 1. Preparación del Entorno
+Clona el repositorio y accede a la carpeta raíz:
 ```bash
-cd foco-aventura
+git clone https://github.com/DiegoMu3507/PLAY.git
+cd PLAY
 ```
 
-### 2. Instalar todas las dependencias:
-Ejecuta el siguiente comando para instalar el motor de animaciones, los estilos y las utilidades necesarias:
-
+### 2. Instalación de Dependencias
+Asegúrate de tener [Node.js](https://nodejs.org/) instalado. Ejecuta:
 ```bash
 npm install
 ```
 
-Si por alguna razón necesitas instalar las dependencias clave manualmente:
-```bash
-npm install framer-motion react-router-dom lucide-react react-icons daisyui react-select react-select-country-list date-fns
-```
-
-### 3. Ejecutar el servidor de desarrollo:
+### 3. Desarrollo Local
+Inicia el servidor de desarrollo de Vite:
 ```bash
 npm run dev
 ```
-La aplicación estará disponible en `http://localhost:5173/`.
+La aplicación estará disponible en: `http://localhost:5173/`
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Código
 
-- `/src/layouts`: Contiene el `MainLayout` con la lógica del menú adaptativo.
-- `/src/pages`: Vistas principales (`Home`, `Info`, `Juegos`).
-- `/src/games`: Lógica y componentes de los juegos interactivos.
-- `/src/index.css`: Definición de la paleta de colores familiar y utilidades 3D.
+```text
+/src
+ ├── /assets      # Recursos visuales y logotipos
+ ├── /components  # Componentes atómicos reutilizables
+ ├── /games       # Lógica de motores de juego
+ ├── /layouts     # MainLayout y navegación adaptativa
+ ├── /pages       # Vistas de alto nivel (Home, Info, Juegos)
+ └── index.css    # Definición de tokens de diseño y utilidades 3D
+```
 
 ---
-*FocoAventura • "Tu mente, tu ritmo, tu éxito."*
+**FocoAventura** • *Tu mente tiene su propio ritmo, y eso es lo que la hace extraordinaria.*
