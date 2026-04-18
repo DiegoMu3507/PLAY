@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  background-color: #ffffff;
+  color: #1d1d1f;
+  /* Variable que controlaremos con JS */
+  --scroll-progress: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  overflow-x: hidden;
+}
+
+/* El elemento azul: se escala y redondea según --scroll-progress */
+.hero-box {
+  transform: scale(calc(1.2 - (var(--scroll-progress) * 0.6)));
+  border-radius: calc(var(--scroll-progress) * 80px);
+}
+
+/* El título: se separa, sube y desaparece */
+.hero-title {
+  transform: translateY(calc(var(--scroll-progress) * -150px)) scale(calc(1 - var(--scroll-progress)));
+  opacity: calc(1 - (var(--scroll-progress) * 2));
+  filter: blur(calc(var(--scroll-progress) * 20px));
+}
+
+/* El mensaje final: aparece al final del scroll */
+.hero-message {
+  opacity: calc((var(--scroll-progress) - 0.5) * 2);
+  transform: translateY(calc(100px - (var(--scroll-progress) * 100px)));
+}
