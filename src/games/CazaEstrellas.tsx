@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { GameProps } from '../types/game'
 
@@ -32,6 +32,8 @@ export default function CazaEstrellas({ onComplete, onExit }: GameProps) {
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS)
   const [startedAt] = useState(Date.now())
   const [finished, setFinished] = useState(false)
+  const hitsRef = useRef(0)
+  const missesRef = useRef(0)
 
   const finish = useCallback((finalHits: number, finalMisses: number) => {
     setFinished(true)
@@ -40,11 +42,16 @@ export default function CazaEstrellas({ onComplete, onExit }: GameProps) {
   }, [onComplete, startedAt])
 
   useEffect(() => {
+    hitsRef.current = hits
+    missesRef.current = misses
+  }, [hits, misses])
+
+  useEffect(() => {
     if (finished) return
-    if (secondsLeft <= 0) { finish(hits, misses); return }
+    if (secondsLeft <= 0) { finish(hitsRef.current, missesRef.current); return }
     const id = setTimeout(() => setSecondsLeft((s) => s - 1), 1000)
     return () => clearTimeout(id)
-  }, [secondsLeft, finished, finish, hits, misses])
+  }, [secondsLeft, finished, finish])
 
   function handleClick(index: number) {
     if (finished || cleared.has(index)) return
