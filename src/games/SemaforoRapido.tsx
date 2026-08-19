@@ -18,6 +18,7 @@ export default function SemaforoRapido({ onComplete, onExit }: GameProps) {
   const [round, setRound] = useState(0)
   const [display, setDisplay] = useState({ hits: 0, falseAlarms: 0 })
   const clickedRef = useRef(false)
+  const statsRef = useRef({ hits: 0, falseAlarms: 0 })
   const startedAt = useRef(Date.now())
 
   const finish = useCallback((hits: number, falseAlarms: number) => {
@@ -30,13 +31,12 @@ export default function SemaforoRapido({ onComplete, onExit }: GameProps) {
     clickedRef.current = false
     const isGreen = sequence[round]
     const timer = setTimeout(() => {
-      setDisplay((prev) => {
-        const hits = prev.hits + (isGreen && clickedRef.current ? 1 : 0)
-        const falseAlarms = prev.falseAlarms + (!isGreen && clickedRef.current ? 1 : 0)
-        if (round + 1 >= ROUNDS) finish(hits, falseAlarms)
-        else setRound((r) => r + 1)
-        return { hits, falseAlarms }
-      })
+      const hits = statsRef.current.hits + (isGreen && clickedRef.current ? 1 : 0)
+      const falseAlarms = statsRef.current.falseAlarms + (!isGreen && clickedRef.current ? 1 : 0)
+      statsRef.current = { hits, falseAlarms }
+      setDisplay({ hits, falseAlarms })
+      if (round + 1 >= ROUNDS) finish(hits, falseAlarms)
+      else setRound((r) => r + 1)
     }, WINDOW_MS)
     return () => clearTimeout(timer)
   }, [round, sequence, finish])
