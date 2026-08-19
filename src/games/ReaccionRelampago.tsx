@@ -32,17 +32,7 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
     return nextRound()
   }, [round, nextRound])
 
-  function handleClick() {
-    if (phase === 'waiting') {
-      setPhase('tooSoon')
-      setTimes((prev) => [...prev, PENALTY_MS])
-      setTimeout(() => setRound((r) => r + 1), 600)
-      return
-    }
-    if (phase !== 'ready') return
-    const reaction = Date.now() - readyAt.current
-    const next = [...times, reaction]
-    setTimes(next)
+  function finishRound(next: number[]) {
     if (next.length >= ROUNDS) {
       const avg = next.reduce((a, b) => a + b, 0) / next.length
       const timeSeconds = Math.round((Date.now() - startedAt.current) / 1000)
@@ -50,6 +40,21 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
     } else {
       setRound((r) => r + 1)
     }
+  }
+
+  function handleClick() {
+    if (phase === 'waiting') {
+      setPhase('tooSoon')
+      const next = [...times, PENALTY_MS]
+      setTimes(next)
+      setTimeout(() => finishRound(next), 600)
+      return
+    }
+    if (phase !== 'ready') return
+    const reaction = Date.now() - readyAt.current
+    const next = [...times, reaction]
+    setTimes(next)
+    finishRound(next)
   }
 
   if (round >= ROUNDS) return null
