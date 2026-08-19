@@ -4,7 +4,7 @@ import type { LazyExoticComponent, ComponentType } from 'react'
 import type { GameMeta, GameProps } from '../types/game'
 import { AGE_LABELS, SKILL_LABELS } from '../types/game'
 
-const AL = AGE_LABELS
+const AL = AGE_LABELS as Record<GameMeta['ageRange'], GameMeta['ageLabel']>
 const SL = SKILL_LABELS
 
 export const GAMES: GameMeta[] = [
