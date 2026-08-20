@@ -15,21 +15,32 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
   const [phase, setPhase] = useState<Phase>('waiting')
   const [times, setTimes] = useState<number[]>([])
   const readyAt = useRef(0)
-  const startedAt = useRef(Date.now())
+  const startedAt = useRef(0)
+  const readyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    startedAt.current = Date.now()
+  }, [])
 
   const nextRound = useCallback(() => {
     setPhase('waiting')
     const delay = 1000 + Math.random() * 2000
-    const timer = setTimeout(() => {
+    readyTimerRef.current = setTimeout(() => {
       readyAt.current = Date.now()
       setPhase('ready')
     }, delay)
-    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
     if (round >= ROUNDS) return
-    return nextRound()
+    // Scheduling the next round's timers here (not a bigger restructure)
+    // keeps this already-twice-patched timing-critical game stable; costs
+    // one extra render per round, no correctness impact.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    nextRound()
+    return () => {
+      if (readyTimerRef.current !== null) clearTimeout(readyTimerRef.current)
+    }
   }, [round, nextRound])
 
   function finishRound(next: number[]) {
@@ -44,6 +55,7 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
 
   function handleClick() {
     if (phase === 'waiting') {
+      if (readyTimerRef.current !== null) clearTimeout(readyTimerRef.current)
       setPhase('tooSoon')
       const next = [...times, PENALTY_MS]
       setTimes(next)
