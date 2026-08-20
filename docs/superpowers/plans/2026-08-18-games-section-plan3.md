@@ -444,7 +444,7 @@ Expected: FAIL — `Cannot find module './LaberintoVeloz'`
 
 ```tsx
 // src/games/LaberintoVeloz.tsx
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import type { GameProps } from '../types/game'
 
 const MAZE = [
@@ -468,13 +468,24 @@ export default function LaberintoVeloz({ onComplete, onExit }: GameProps) {
   const [pos, setPos] = useState(START)
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME)
   const [finished, setFinished] = useState(false)
+  const finishedRef = useRef(false)
+  const timeLeftRef = useRef(TOTAL_TIME)
 
+  useEffect(() => { timeLeftRef.current = timeLeft }, [timeLeft])
+
+  // NOTE: finish() must stay idempotent via finishedRef (a plain ref check,
+  // not a setState updater) because it is called from two places below —
+  // the countdown effect and the position-watch effect. Do NOT restructure
+  // this into a `setFinished((already) => {...})` updater that calls
+  // onComplete() inside it: this app renders in <StrictMode> (src/main.tsx),
+  // which deliberately double-invokes setState updater functions in dev to
+  // surface impurity — an onComplete-calling updater would fire onComplete
+  // twice on completion.
   const finish = useCallback((reachedEnd: boolean, finalTimeLeft: number) => {
-    setFinished((already) => {
-      if (already) return true
-      onComplete({ ...computeLaberintoScore(finalTimeLeft, reachedEnd), timeSeconds: TOTAL_TIME - finalTimeLeft })
-      return true
-    })
+    if (finishedRef.current) return
+    finishedRef.current = true
+    setFinished(true)
+    onComplete({ ...computeLaberintoScore(finalTimeLeft, reachedEnd), timeSeconds: TOTAL_TIME - finalTimeLeft })
   }, [onComplete])
 
   useEffect(() => {
@@ -484,9 +495,16 @@ export default function LaberintoVeloz({ onComplete, onExit }: GameProps) {
     return () => clearTimeout(id)
   }, [timeLeft, finished, finish])
 
+  // Detects reaching the end by watching `pos` — kept separate from the
+  // `setPos` updater below so that updater stays a pure function of its
+  // previous state (no onComplete side effect inside a setState updater).
+  useEffect(() => {
+    if (pos.row === END.row && pos.col === END.col) finish(true, timeLeftRef.current)
+  }, [pos, finish])
+
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (finished) return
+      if (finishedRef.current) return
       const deltas: Record<string, [number, number]> = {
         ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1],
       }
@@ -497,13 +515,12 @@ export default function LaberintoVeloz({ onComplete, onExit }: GameProps) {
         const col = prev.col + delta[1]
         if (row < 0 || row >= MAZE.length || col < 0 || col >= MAZE[0].length) return prev
         if (MAZE[row][col] === 1) return prev
-        if (row === END.row && col === END.col) finish(true, timeLeft)
         return { row, col }
       })
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [finished, finish, timeLeft])
+  }, [])
 
   return (
     <div className="max-w-sm mx-auto text-center">
@@ -619,17 +636,7 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
     return nextRound()
   }, [round, nextRound])
 
-  function handleClick() {
-    if (phase === 'waiting') {
-      setPhase('tooSoon')
-      setTimes((prev) => [...prev, PENALTY_MS])
-      setTimeout(() => setRound((r) => r + 1), 600)
-      return
-    }
-    if (phase !== 'ready') return
-    const reaction = Date.now() - readyAt.current
-    const next = [...times, reaction]
-    setTimes(next)
+  function finishRound(next: number[]) {
     if (next.length >= ROUNDS) {
       const avg = next.reduce((a, b) => a + b, 0) / next.length
       const timeSeconds = Math.round((Date.now() - startedAt.current) / 1000)
@@ -637,6 +644,25 @@ export default function ReaccionRelampago({ onComplete, onExit }: GameProps) {
     } else {
       setRound((r) => r + 1)
     }
+  }
+
+  function handleClick() {
+    if (phase === 'waiting') {
+      setPhase('tooSoon')
+      const next = [...times, PENALTY_MS]
+      setTimes(next)
+      // A premature click on the final round must still finish the game —
+      // without this branch the component silently returns null on round 5
+      // (see `if (round >= ROUNDS) return null` below) and onComplete never
+      // fires, leaving the game stuck with no result reported.
+      setTimeout(() => finishRound(next), 600)
+      return
+    }
+    if (phase !== 'ready') return
+    const reaction = Date.now() - readyAt.current
+    const next = [...times, reaction]
+    setTimes(next)
+    finishRound(next)
   }
 
   if (round >= ROUNDS) return null
@@ -1114,7 +1140,11 @@ import type { LazyExoticComponent, ComponentType } from 'react'
 import type { GameMeta, GameProps } from '../types/game'
 import { AGE_LABELS, SKILL_LABELS } from '../types/game'
 
-const AL = AGE_LABELS
+// AGE_LABELS is typed Record<AgeRange, string>, but GameMeta.ageLabel needs
+// the narrower literal union ('Exploradores' | 'Aventureros' | ...) — cast
+// once here so every `AL[ageRange]` lookup below type-checks without an
+// `as` on each of the 50 entries.
+const AL = AGE_LABELS as Record<GameMeta['ageRange'], GameMeta['ageLabel']>
 const SL = SKILL_LABELS
 
 export const GAMES: GameMeta[] = [
