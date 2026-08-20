@@ -41,7 +41,7 @@ export default function CambiaDeRegla({ onComplete, onExit }: GameProps) {
   const [correctSorts, setCorrectSorts] = useState(0)
   const [perseverationErrors, setPerseverationErrors] = useState(0)
   const [justSwitched, setJustSwitched] = useState(false)
-  const [startedAt] = useState(Date.now())
+  const [startedAt] = useState(() => Date.now())
 
   const finish = useCallback((finalCorrect: number, finalPersev: number) => {
     const timeSeconds = Math.round((Date.now() - startedAt) / 1000)

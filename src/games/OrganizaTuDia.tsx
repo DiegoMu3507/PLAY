@@ -36,7 +36,7 @@ function shuffledIds(): string[] {
 
 export default function OrganizaTuDia({ onComplete, onExit }: GameProps) {
   const [order, setOrder] = useState(shuffledIds)
-  const [startedAt] = useState(Date.now())
+  const [startedAt] = useState(() => Date.now())
 
   function move(index: number, direction: -1 | 1) {
     const target = index + direction

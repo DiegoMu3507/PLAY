@@ -30,7 +30,7 @@ export default function CazaEstrellas({ onComplete, onExit }: GameProps) {
   const [hits, setHits] = useState(0)
   const [misses, setMisses] = useState(0)
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS)
-  const [startedAt] = useState(Date.now())
+  const [startedAt] = useState(() => Date.now())
   const [finished, setFinished] = useState(false)
   const hitsRef = useRef(0)
   const missesRef = useRef(0)

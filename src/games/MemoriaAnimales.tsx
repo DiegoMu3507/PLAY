@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { GameProps } from '../types/game'
 
 const ANIMALS = ['🐶', '🐱', '🐰', '🦊', '🐼', '🦁']
@@ -24,8 +24,13 @@ export default function MemoriaAnimales({ onComplete, onExit }: GameProps) {
   const [flipped, setFlipped] = useState<number[]>([])
   const [matched, setMatched] = useState<Set<number>>(new Set())
   const [attempts, setAttempts] = useState(0)
-  const [startedAt] = useState(Date.now())
+  const [startedAt] = useState(() => Date.now())
   const [busy, setBusy] = useState(false)
+
+  const finish = useCallback((finalAttempts: number) => {
+    const timeSeconds = Math.round((Date.now() - startedAt) / 1000)
+    onComplete({ ...computeMemoriaScore(TOTAL_PAIRS, finalAttempts), timeSeconds })
+  }, [onComplete, startedAt])
 
   function handleFlip(index: number) {
     if (busy || flipped.includes(index) || matched.has(index)) return
@@ -43,8 +48,7 @@ export default function MemoriaAnimales({ onComplete, onExit }: GameProps) {
       setFlipped([])
       setBusy(false)
       if (newMatched.size === deck.length) {
-        const timeSeconds = Math.round((Date.now() - startedAt) / 1000)
-        onComplete({ ...computeMemoriaScore(TOTAL_PAIRS, nextAttempts), timeSeconds })
+        finish(nextAttempts)
       }
     } else {
       setTimeout(() => { setFlipped([]); setBusy(false) }, 700)

@@ -23,7 +23,7 @@ export default function SecuenciaLogica({ onComplete, onExit }: GameProps) {
   const [round, setRound] = useState(0)
   const [current, setCurrent] = useState(buildRound)
   const [correct, setCorrect] = useState(0)
-  const [startedAt] = useState(Date.now())
+  const [startedAt] = useState(() => Date.now())
 
   const finish = useCallback((finalCorrect: number) => {
     const timeSeconds = Math.round((Date.now() - startedAt) / 1000)

@@ -19,7 +19,11 @@ export default function SemaforoRapido({ onComplete, onExit }: GameProps) {
   const [display, setDisplay] = useState({ hits: 0, falseAlarms: 0 })
   const clickedRef = useRef(false)
   const statsRef = useRef({ hits: 0, falseAlarms: 0 })
-  const startedAt = useRef(Date.now())
+  const startedAt = useRef(0)
+
+  useEffect(() => {
+    startedAt.current = Date.now()
+  }, [])
 
   const finish = useCallback((hits: number, falseAlarms: number) => {
     const timeSeconds = Math.round((Date.now() - startedAt.current) / 1000)

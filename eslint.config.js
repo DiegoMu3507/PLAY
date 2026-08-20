@@ -19,4 +19,12 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Each game colocates its default component with a named, pure
+    // compute*Score fn so scoring can be unit-tested without simulating the
+    // UI (see docs/superpowers/specs/2026-08-18-games-section-plan3-design.md).
+    // That intentionally breaks Fast Refresh's one-export-per-file convention.
+    files: ['src/games/*.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 ])
