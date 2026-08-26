@@ -48,7 +48,7 @@ export default function GamesPage() {
                   }}
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
                     selectedAge === age 
-                      ? 'bg-primary-600 text-white' 
+                      ? 'bg-indigo-600 text-white' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -66,7 +66,7 @@ export default function GamesPage() {
                   onClick={() => setSelectedSkill(skill)}
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
                     selectedSkill === skill 
-                      ? 'bg-secondary-500 text-white' 
+                      ? 'bg-purple-600 text-white' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >

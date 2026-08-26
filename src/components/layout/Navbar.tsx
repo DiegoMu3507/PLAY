@@ -12,6 +12,7 @@ export function Navbar() {
     { to: '/',            label: '🏠 Inicio' },
     { to: '/informacion', label: '📚 Información' },
     { to: '/juegos',      label: '🎮 Juegos' },
+    { to: '/recompensas', label: '🏆 Recompensas' },
   ]
 
   return (

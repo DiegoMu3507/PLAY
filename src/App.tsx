@@ -13,6 +13,7 @@ const InfoArticle = lazy(() => import('./pages/InfoArticle'))
 const GamesPage   = lazy(() => import('./pages/GamesPage'))
 const GamePlayer  = lazy(() => import('./pages/GamePlayer'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const RewardsPage = lazy(() => import('./pages/RewardsPage'))
 const NotFound    = lazy(() => import('./pages/NotFound'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,7 @@ export default function App() {
               <Route path="/informacion/:slug" element={<InfoArticle />} />
               <Route path="/juegos"            element={<GamesPage />} />
               <Route path="/juegos/:id"        element={<GamePlayer />} />
+              <Route path="/recompensas"       element={<RewardsPage />} />
               <Route path="/perfil"            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="*"                  element={<NotFound />} />
             </Routes>

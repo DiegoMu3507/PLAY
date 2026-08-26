@@ -2,14 +2,32 @@ import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../store/authStore'
 import type { UserProfile } from '../types/user'
+import type { User } from '@supabase/supabase-js'
 
-async function fetchProfile(userId: string): Promise<UserProfile | null> {
+async function fetchOrCreateProfile(user: User): Promise<UserProfile | null> {
   const { data, error } = await supabase
     .from('user_profiles')
     .select('*')
-    .eq('id', userId)
+    .eq('id', user.id)
     .single()
-  if (error) return null
+    
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // Si no existe el perfil (PGRST116: no rows found), lo creamos (común en login con Google)
+      const { data: newProfile, error: insertError } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: user.id,
+          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario',
+          type: 'parent', // Asumimos 'parent' por defecto para OAuth
+        })
+        .select()
+        .single()
+        
+      if (!insertError) return newProfile as UserProfile
+    }
+    return null
+  }
   return data as UserProfile
 }
 
@@ -21,16 +39,17 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session?.user) {
-        fetchProfile(session.user.id).then(setProfile)
+        fetchOrCreateProfile(session.user).then(setProfile)
+      } else {
+        setLoading(false)
       }
-      setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session)
         if (session?.user) {
-          const profile = await fetchProfile(session.user.id)
+          const profile = await fetchOrCreateProfile(session.user)
           setProfile(profile)
         } else {
           setProfile(null)

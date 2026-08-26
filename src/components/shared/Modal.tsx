@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface ModalProps {
@@ -17,10 +18,10 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' 
     return () => document.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -33,12 +34,12 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={['relative bg-white rounded-2xl shadow-2xl w-full', maxWidth].join(' ')}
+            className={['relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto', maxWidth].join(' ')}
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
           >
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
               <h2 id="modal-title" className="text-xl font-bold text-gray-800">{title}</h2>
               <button
                 onClick={onClose}
@@ -54,6 +55,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' 
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
