@@ -5,6 +5,10 @@ import { CalmBreath } from '../components/games/CalmBreath';
 import { RocketPlan } from '../components/games/RocketPlan';
 import { PatternHero } from '../components/games/PatternHero';
 import { MathFocus } from '../components/games/MathFocus';
+import { WordSearch } from '../components/games/WordSearch';
+import { ReactionBox } from '../components/games/ReactionBox';
+import { ColorSort } from '../components/games/ColorSort';
+import { SoundEcho } from '../components/games/SoundEcho';
 import { mockGames } from '../data/mockGames';
 import { Button } from '../components/shared/Button';
 import { useProgressStore } from '../store/progressStore';
@@ -42,6 +46,10 @@ export default function GamePlayer() {
       case 'rocket-plan': return <RocketPlan onComplete={handleComplete} />;
       case 'pattern-hero': return <PatternHero onComplete={handleComplete} />;
       case 'math-focus': return <MathFocus onComplete={handleComplete} />;
+      case 'word-search': return <WordSearch onComplete={handleComplete} />;
+      case 'reaction-box': return <ReactionBox onComplete={handleComplete} />;
+      case 'color-sort': return <ColorSort onComplete={handleComplete} />;
+      case 'sound-echo': return <SoundEcho onComplete={handleComplete} />;
       default:
         return (
           <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-sm border border-gray-100 text-center">
